@@ -1,27 +1,54 @@
 import React, { Component } from 'react';
 import Card from './components/Card.js';
+import $ from 'jquery';
 import './App.css';
 
-var thoughts = [
-    {
-      text: "first thought.."
-    },
-    {
-      text: "first thought.."
-    },
-    {
-      text: "first thought.."
-    },
-    {
-      text: "first thought.."
-    },
-    {
-      text: "first thought.."
-    }
-];
 class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {thought : []};
+    console.log("from constructor")
+  }
+
+  componentDidMount(){
+    console.log("componentDidMount()");
+
+  }
+
+  componentWillMount(){
+    console.log("componentWillMount");
+    $.ajax({
+      url: "https://luminous-inferno-7529.firebaseio.com/thoughts.json",
+      type: "GET",             // Type of request to be send, called as method
+      crossDomain: true,
+      dataType: "json",
+      data: "", // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+      success: function(data){   // A function to be called if request succeeds
+        this.setState({thought: data});
+        for (var i = 0; i < data.length; i++) {
+          console.log(data[i].content.desc)
+        }
+      }.bind(this)
+    });
+  }
+
   render() {
-    var thoughts
+    var thts = [];
+    var thoughts = this.state.thought;
+    for (var i = 0; i < thoughts.length; i++) {
+      thts.push(thoughts[i].content.desc);
+      console.log(thts[i] + " from for loop ");
+    }
+    console.log(thts.length);
+    let allThoughts = (
+      <div>
+        {thts.map(function(thought, index){
+          return (
+            <Card thoughtDesc={thought}/>
+          )
+        })}
+      </div>
+    );
     return (
       <div className="App">
         <div className="row header">
@@ -41,10 +68,7 @@ class App extends Component {
                 </form>
               </div>
               <div className="row all-thoughts">
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
+                {allThoughts}
               </div>
             </div>
             <div className="col-md-4"></div>

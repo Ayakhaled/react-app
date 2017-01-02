@@ -7,7 +7,7 @@ class Card extends Component {
     render() {
         return (
             <div className="row card">
-                <p>Hello my first thought...</p>
+                <p>{this.props.thoughtDesc}</p>
             </div>
         );
     }
